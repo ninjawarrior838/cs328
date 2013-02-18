@@ -1,3 +1,13 @@
+/*
+  Filename   : lnorm.hpp
+  Class      : CS328 Spring 2013
+  Assignment : Program 2
+  Programmer : Kyle jamison
+  Date       : 2/17/2013
+
+  Lnorm class function definitions
+
+*/
 
 template<class T>
 T Lnorm<T>::operator()(const std::vector< Quaternion<T> >& set)

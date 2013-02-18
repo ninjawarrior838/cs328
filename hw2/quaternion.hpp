@@ -1,5 +1,12 @@
 /*
-  File: quaternion.hpp
+  Filename   : quaternion.hpp
+  Class      : CS328 Spring 2013
+  Assignment : Program 2
+  Programmer : Kyle jamison
+  Date       : 2/17/2013
+
+  Quaternion class function definitions
+
 */
 
 template<class T>
@@ -27,10 +34,7 @@ Quaternion<T>& Quaternion<T>::operator+=(const Quaternion<T>& rhs)
 template<class T>
 Quaternion<T>& Quaternion<T>::operator-=(const Quaternion<T>& rhs)
 {
-  m_a -= rhs.m_a;
-  m_b -= rhs.m_b;
-  m_c -= rhs.m_c;
-  m_d -= rhs.m_d;
+  *this += -(rhs);
   return *this;
 }
 
@@ -63,11 +67,21 @@ Quaternion<T> Quaternion<T>::operator*(const Quaternion<T>& rhs) const
 }
 
 template<class T>
+Quaternion<T> Quaternion<T>::operator*(const T& rhs) const
+{
+  Quaternion<T> result = *this;
+  result.m_a *= rhs;
+  result.m_b *= rhs;
+  result.m_c *= rhs;
+  result.m_d *= rhs;
+  return result;
+}
+
+template<class T>
 Quaternion<T> Quaternion<T>::operator/(const Quaternion<T>& rhs) const
 {
-  //Quaternion<T> result = *this
   //disvision is the same as h1 * inverse h2
-  //inverse in the average of the coeff over the square of the norm
+  return (*this * rhs.inverse());
 }
 
 template<class T>
@@ -85,28 +99,35 @@ template<class T>
 T Quaternion<T>::operator[](const int index) const
 {
   T result;
-  switch(index)
+  try
   {
-    case(0)
-      result = m_a;
-      break;
-    case(1)
-      result = m_b;
-      break;
-    case(2)
-      result = m_c;
-      break;
-    case(3)
-      result = m_d;
-      break;
-    default
-      break;
+    switch(index)
+    {
+     case(0):
+        result = m_a;
+        break;
+     case(1):
+        result = m_b;
+        break;
+     case(2):
+        result = m_c;
+        break;
+     case(3):
+        result = m_d;
+        break;
+      default:
+        throw RangeErr(index);
+    }
+  }
+  catch(RangeErr e)
+  {
+    std::cerr << "Subscript is out of range: " << e.badSubscript();
   }
   return result;
 }
 
 template<class T>
-T Quaternion<T>::operator!() const
+Quaternion<T> Quaternion<T>::operator!() const
 {
   Quaternion<T> result;
   result.m_a = m_a;
@@ -128,4 +149,58 @@ template<class T>
 T Quaternion<T>::mag() const
 {
   return ~(*this);
+}
+
+template<class T>
+Quaternion<T> Quaternion<T>::inverse() const
+{
+  Quaternion<T> result = *this;
+  T denom = ~result * ~result;
+  try
+  {
+    if( denom == 0 )
+      throw DivByZeroErr();
+  }
+  catch(DivByZeroErr e)
+  {
+    std::cerr << "Division by zero error!" << std::endl;
+  }
+  return ( !result * (1 / denom));
+}
+
+template<class T>
+bool Quaternion<T>::operator==(const Quaternion<T>& rhs) const
+{
+  bool result;
+  if(m_a==rhs.m_a && m_b==rhs.m_b && m_c==rhs.m_c && m_d==rhs.m_d)
+    result = true;
+  else
+    result = false;
+  return result;
+}
+
+template<class T>
+bool Quaternion<T>::operator!=(const Quaternion<T>& rhs) const
+{
+  return !(*this==rhs);
+}
+
+template<class U>
+std::istream& operator>>(std::istream& is, Quaternion<U>& h)
+{
+  is >> (h.m_a);
+  is >> (h.m_b);
+  is >> (h.m_c);
+  is >> (h.m_d);
+  return is;
+}
+
+template<class U>
+std::ostream& operator<<(std::ostream& os, const Quaternion<U>& h)
+{
+  os << h.m_a << (h.m_b>=0 ? "+" : "-" );
+  os << fabs(h.m_b) << "i" << (h.m_c>=0? "+" : "-" );
+  os << fabs(h.m_c) << "j" << (h.m_d>=0? "+" : "-" );
+  os << fabs(h.m_d) << "k";
+  return os;
 }

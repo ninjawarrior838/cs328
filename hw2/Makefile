@@ -1,10 +1,11 @@
 # Filename   :  Makefile2.txt
 # Class      :  CS328 Spring 2013
-# Assignment :  Program 1
+# Assignment :  Program 2
 # Programmer :  Kyle Jamison
 # Date       :  2/3/2013
 
-# This makefile will build an executable for the second example code.
+# This makefile will build an executable from the driver.cpp file to test
+# the quaternion class.
 
 CXX = /usr/bin/g++
 FLAGS = -g -Wall -W -pedantic-errors
